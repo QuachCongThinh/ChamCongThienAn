@@ -1,0 +1,166 @@
+@import '../../styles/variables';
+
+// Hiệu ứng Animation Keyframes
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+.animate-slide-up {
+  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-in forwards;
+}
+
+// Thiết kế trạng thái chưa có dữ liệu
+.empty-state {
+  background: $white;
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 4rem 2rem;
+  text-align: center;
+  max-width: 500px;
+  margin: 3rem auto;
+  
+  .icon-box {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+  h3 { margin: 0 0 0.5rem 0; color: $text-dark; }
+  p { margin: 0; color: $text-muted; font-size: 0.95rem; }
+}
+
+// Thiết kế Table chính
+.table-wrapper {
+  background: $white;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
+  border: 1px solid $border-color;
+  overflow: hidden;
+
+  .table-responsive {
+    overflow-x: auto;
+    max-height: 72vh;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 0.875rem;
+    text-align: left;
+
+    thead {
+      background-color: #f1f5f9;
+      position: sticky;
+      top: 0;
+      z-index: 10;
+
+      th {
+        padding: 0.75rem 0.5rem;
+        font-weight: 600;
+        color: #334155;
+        border-bottom: 2px solid $border-color;
+        text-align: center;
+      }
+    }
+
+    tbody {
+      .table-row {
+        transition: $transition-smooth;
+
+        &:nth-child(even) {
+          background-color: #f8fafc;
+        }
+
+        &:hover {
+          background-color: #f1f5f9 !important;
+          
+          .sticky-col {
+            background-color: #f1f5f9 !important;
+          }
+        }
+      }
+
+      td {
+        padding: 0.65rem 0.5rem;
+        border-bottom: 1px solid $border-color;
+        border-r: 1px solid #f1f5f9;
+      }
+    }
+
+    // Các lớp định vị Freeze Panes (Cố định cột STT và Tên)
+    .sticky-col {
+      position: sticky;
+      background-color: $white;
+      z-index: 2;
+
+      &.stt-col {
+        left: 0;
+        width: 50px;
+        min-width: 50px;
+        border-right: 1px solid $border-color;
+      }
+
+      &.name-col {
+        left: 50px;
+        min-width: 200px;
+        border-right: 2px solid $border-color;
+        text-align: left;
+        padding-left: 1rem;
+      }
+    }
+
+    thead th.sticky-col {
+      background-color: #f1f5f9;
+      z-index: 5;
+    }
+
+    // Định dạng nội dung ô dữ liệu
+    .cell-center { text-align: center; }
+    .font-bold { font-weight: 600; color: $text-dark; }
+    
+    .day-col { min-width: 120px; }
+    .role-col { min-width: 90px; }
+
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.5rem;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+
+      &-bs { background-color: $color-bs-bg; color: $color-bs-text; }
+      &-ktv { background-color: $color-ktv-bg; color: $color-ktv-text; }
+    }
+
+    .cell-shift {
+      text-align: center;
+      font-size: 0.75rem;
+      transition: $transition-smooth;
+
+      &.active {
+        background-color: rgba(79, 70, 229, 0.04);
+        color: #1e1b4b;
+        font-weight: 500;
+      }
+
+      &.empty {
+        color: #cbd5e1;
+      }
+    }
+  }
+}

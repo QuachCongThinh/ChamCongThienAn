@@ -1,0 +1,67 @@
+@import 'variables';
+
+body {
+  margin: 0;
+  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  background-color: $bg-main;
+  color: $text-dark;
+  -webkit-font-smoothing: antialiased;
+}
+
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 2rem;
+}
+
+.header-tool {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  border-b: 1px solid $border-color;
+  padding-bottom: 1.5rem;
+  
+  h1 {
+    font-size: 1.8rem;
+    margin: 0 0 0.5rem 0;
+    color: $text-dark;
+  }
+  
+  p {
+    margin: 0;
+    color: $text-muted;
+    font-weight: 500;
+  }
+}
+.action-groups {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+
+.btn-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 16px;
+  background-color: #107c41; // Màu xanh lá đặc trưng của Microsoft Excel
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 14px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  box-shadow: 0 2px 6px rgba(16, 124, 65, 0.2);
+
+  &:hover {
+    background-color: #0b592e;
+    transform: translateY(-1px);
+    box-shadow: 0 4px 8px rgba(16, 124, 65, 0.3);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
