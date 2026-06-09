@@ -59,14 +59,9 @@ function App() {
     reader.readAsBinaryString(file);
   };
 
-  // Hàm chuyển đổi giờ thập phân sang dạng text hiển thị chu đáo (ví dụ: 11.5 -> 11h30)
-  const formatDecimalToTimeStr = (dec) => {
-    const h = Math.floor(dec);
-    const m = Math.round((dec - h) * 60);
-    return m === 0 ? `${h}h` : `${h}h${m}`;
-  };
+  // ĐÃ XÓA HÀM formatDecimalToTimeStr BỊ THỪA Ở ĐÂY ĐỂ TRÁNH LỖI ESLINT UNUSED-VARS
 
-  //Hàm check quan trọng
+  // Hàm check quan trọng
   const matchStandardShift = (hoursArray) => {
     if (!hoursArray || hoursArray.length === 0) return "";
 
@@ -271,7 +266,6 @@ function App() {
         if (hoursArray.length === 0) {
           schedule[day] = "";
         } else {
-          // THAY ĐỔI Ở ĐÂY: Truyền cả mảng hoursArray vào thay vì min/max
           schedule[day] = matchStandardShift(hoursArray);
         }
       });
