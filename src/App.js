@@ -148,7 +148,7 @@ function App() {
 
     return `${fmt(start)}-${fmt(end)}`;
   };
-  
+
   const processRawLogData = (rawData) => {
     if (rawData.length <= 1) {
       setLoading(false);
@@ -272,7 +272,7 @@ function App() {
           schedule[day] = "";
         } else {
           // THAY ĐỔI Ở ĐÂY: Truyền cả mảng hoursArray vào thay vì min/max
-          schedule[day] = matchStandardShift(hoursArray); 
+          schedule[day] = matchStandardShift(hoursArray);
         }
       });
 
