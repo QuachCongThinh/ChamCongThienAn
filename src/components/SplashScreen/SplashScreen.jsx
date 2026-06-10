@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import "./SplashScreen.scss";
 
-function SplashScreen() {
+function SplashScreen({ isExiting }) {
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
@@ -9,18 +9,20 @@ function SplashScreen() {
 
     const interval = setInterval(() => {
       value += 1;
-      setProgress(value);
 
-      if (value >= 100) {
+      if (value > 100) {
         clearInterval(interval);
+        return;
       }
-    }, 30); // 100 x 30ms = 3000ms
+
+      setProgress(value);
+    }, 30);
 
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <div className="splash-screen">
+    <div className={`splash-screen ${isExiting ? "splash-screen-exit" : ""}`}>
       <div className="splash-content">
         <img src="/logo.png" alt="Thiên Ân" className="splash-logo" />
 
@@ -32,14 +34,15 @@ function SplashScreen() {
           <div className="loading-bar">
             <div
               className="loading-progress"
-              style={{ width: `${progress}%` }}
+              style={{
+                width: `${progress}%`,
+              }}
             />
+
+            <div className="progress-percent">{progress}%</div>
           </div>
 
-          <div className="loading-info">
-            <span>Đang tải dữ liệu...</span>
-            <span>{progress}%</span>
-          </div>
+          <div className="loading-text">Đang tải dữ liệu...</div>
         </div>
       </div>
     </div>

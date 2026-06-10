@@ -40,11 +40,27 @@ function App() {
   const [daysInMonth, setDaysInMonth] = useState([]);
   const [loading, setLoading] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
+  const [isExiting, setIsExiting] = useState(false);
+
+  useEffect(() => {
+    const startExit = setTimeout(() => {
+      setIsExiting(true);
+    }, 3000);
+
+    const removeSplash = setTimeout(() => {
+      setShowSplash(false);
+    }, 3500);
+
+    return () => {
+      clearTimeout(startExit);
+      clearTimeout(removeSplash);
+    };
+  }, []);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setShowSplash(false);
-    }, 3500);
+    }, 4000);
 
     return () => clearTimeout(timer);
   }, []);
@@ -384,62 +400,70 @@ function App() {
 
     XLSX.writeFile(wb, `${fileName}.xlsx`);
   };
+
   if (showSplash) {
-    return <SplashScreen />;
+    return <SplashScreen isExiting={isExiting} />;
   }
-
   return (
-    <div className="clinic-dashboard-container">
-      <header className="clinic-header">
-        <div className="brand-area">
-          <div className="medical-logo">
-            <span>✦</span>
-          </div>
-          <div className="title-group">
-            <h1>HỆ THỐNG KIỂM TRA CHẤM CÔNG NHÂN SỰ</h1>
-            <p className="subtitle">
-              <span className="clinic-name">PHÒNG KHÁM ĐA KHOA THIÊN ÂN</span>
-              {thang && (
-                <span className="calendar-badge">📅 {thang.toUpperCase()}</span>
-              )}
-            </p>
-          </div>
-        </div>
-
-        <div className="action-control-group">
-          <FileUpload onUpload={handleFileUpload} loading={loading} />
-
-          {data.length > 0 && (
-            <button className="btn-clinic-export" onClick={handleExportExcel}>
-              <span className="icon">📥</span> Xuất Báo Cáo Excel
-            </button>
-          )}
-        </div>
-      </header>
-
-      {data.length > 0 && (
-        <section className="quick-stats-cards animate-fade-in">
-          <div className="stat-card">
-            <span className="stat-icon bs">🩺</span>
-            <div className="stat-info">
-              <span className="stat-label">Tổng nhân sự</span>
-              <span className="stat-value">{data.length} thành viên</span>
+    <>
+      <div
+        className={`app-shell ${!showSplash ? "app-shell-visible" : ""}`}
+      ></div>
+      <div className="clinic-dashboard-container">
+        <header className="clinic-header">
+          <div className="brand-area">
+            <div className="medical-logo">
+              <span>✦</span>
+            </div>
+            <div className="title-group">
+              <h1>HỆ THỐNG KIỂM TRA CHẤM CÔNG NHÂN SỰ</h1>
+              <p className="subtitle">
+                <span className="clinic-name">PHÒNG KHÁM ĐA KHOA THIÊN ÂN</span>
+                {thang && (
+                  <span className="calendar-badge">
+                    📅 {thang.toUpperCase()}
+                  </span>
+                )}
+              </p>
             </div>
           </div>
-          <div className="stat-card">
-            <span className="stat-icon range">📅</span>
-            <div className="stat-info">
-              <span className="stat-label">Thời gian hiển thị</span>
-              <span className="stat-value">{daysInMonth.length} ngày</span>
-            </div>
-          </div>
-        </section>
-      )}
 
-      <main className="clinic-main-content">
-        <AttendanceTable data={data} daysInMonth={daysInMonth} />
-      </main>
-    </div>
+          <div className="action-control-group">
+            <FileUpload onUpload={handleFileUpload} loading={loading} />
+
+            {data.length > 0 && (
+              <button className="btn-clinic-export" onClick={handleExportExcel}>
+                <span className="icon">📥</span> Xuất Báo Cáo Excel
+              </button>
+            )}
+          </div>
+        </header>
+
+        {data.length > 0 && (
+          <section className="quick-stats-cards animate-fade-in">
+            <div className="stat-card">
+              <span className="stat-icon bs">🩺</span>
+              <div className="stat-info">
+                <span className="stat-label">Tổng nhân sự</span>
+                <span className="stat-value">{data.length} thành viên</span>
+              </div>
+            </div>
+            <div className="stat-card">
+              <span className="stat-icon range">📅</span>
+              <div className="stat-info">
+                <span className="stat-label">Thời gian hiển thị</span>
+                <span className="stat-value">{daysInMonth.length} ngày</span>
+              </div>
+            </div>
+          </section>
+        )}
+
+        <main className="clinic-main-content">
+          <AttendanceTable data={data} daysInMonth={daysInMonth} />
+        </main>
+      </div>
+      {showSplash && <SplashScreen isExiting={isExiting} />}
+    </>
   );
 }
 
