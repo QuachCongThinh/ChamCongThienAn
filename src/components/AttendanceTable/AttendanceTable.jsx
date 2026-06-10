@@ -38,7 +38,7 @@ export default function AttendanceTable({ data, daysInMonth }) {
                 {daysInMonth.map((day) => {
                   const shift = row.schedule[day];
                   const hasShift = shift && shift.trim() !== "";
-                  
+
                   return (
                     <td key={day} className="cell-shift">
                       {hasShift ? (

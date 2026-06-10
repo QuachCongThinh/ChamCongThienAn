@@ -23,8 +23,10 @@
 }
 
 .splash-logo {
-  width: 140px;
-  height: 140px;
+  // width: 140px;
+  // height: 140px;
+  width: clamp(90px, 20vw, 140px);
+  height: clamp(90px, 20vw, 140px);
   object-fit: contain;
 
   margin-bottom: 1rem;
@@ -35,25 +37,21 @@
 }
 
 .splash-content h1 {
-  margin: 0;
-
-  font-size: 2.5rem;
+  font-size: clamp(1.3rem, 5vw, 2.6rem);
   font-weight: 900;
-
+  margin: 0;
   color: #e11d48;
 }
 
 .splash-content p {
+  font-size: clamp(0.9rem, 3vw, 1.3rem);
   margin-top: 1rem;
   margin-bottom: 2rem;
-
   color: #1e3a8a;
-  font-size: 1.2rem;
 }
 
 .loading-wrapper {
-  width: 720px;
-  max-width: 90vw;
+  width: min(720px, 90vw);
 }
 
 .loading-bar {
@@ -73,12 +71,7 @@
 
   border-radius: inherit;
 
-  background: linear-gradient(
-    90deg,
-    #2563eb,
-    #3b82f6,
-    #60a5fa
-  );
+  background: linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa);
 
   transition: width 30ms linear;
 }
@@ -138,20 +131,14 @@
 
 @keyframes logoGlow {
   0% {
-    filter: drop-shadow(
-      0 0 6px rgba(37, 99, 235, 0.25)
-    );
+    filter: drop-shadow(0 0 6px rgba(37, 99, 235, 0.25));
   }
 
   50% {
-    filter: drop-shadow(
-      0 0 20px rgba(37, 99, 235, 0.5)
-    );
+    filter: drop-shadow(0 0 20px rgba(37, 99, 235, 0.5));
   }
 
   100% {
-    filter: drop-shadow(
-      0 0 6px rgba(37, 99, 235, 0.25)
-    );
+    filter: drop-shadow(0 0 6px rgba(37, 99, 235, 0.25));
   }
 }

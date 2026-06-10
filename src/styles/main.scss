@@ -16,6 +16,8 @@ body {
   max-width: 1700px;
   margin: 0 auto;
   padding: 2rem;
+  width: 100%;
+  box-sizing: border-box;
 
   animation: dashboardEnter 0.7s ease-out;
 }
@@ -272,4 +274,120 @@ body {
 .app-shell-visible {
   opacity: 1;
   transform: translateY(0);
+}
+
+//////Responsive
+@media (max-width: 992px) {
+  .clinic-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .action-control-group {
+    width: 100%;
+    flex-wrap: wrap;
+  }
+}
+@media (max-width: 768px) {
+  .clinic-dashboard-container {
+    padding: 1rem;
+  }
+
+  .clinic-header {
+    padding: 1rem;
+  }
+
+  .title-group h1 {
+    font-size: 1.05rem !important;
+    line-height: 1.4;
+  }
+
+  .subtitle {
+    flex-direction: column;
+    align-items: flex-start !important;
+    gap: 0.3rem !important;
+  }
+
+  .btn-clinic-export {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .quick-stats-cards {
+    flex-direction: column;
+  }
+
+  .quick-stats-cards .stat-card {
+    min-width: unset;
+    width: 100%;
+  }
+}
+@media (max-width: 576px) {
+  .clinic-dashboard-container {
+    padding: 0.75rem;
+  }
+
+  .clinic-header {
+    padding: 0.85rem;
+    border-radius: 12px;
+  }
+
+  .medical-logo {
+    width: 40px !important;
+    height: 40px !important;
+    font-size: 1.2rem !important;
+  }
+
+  .title-group h1 {
+    font-size: 0.95rem !important;
+    line-height: 1.5;
+  }
+
+  .clinic-name {
+    font-size: 0.8rem;
+  }
+
+  .calendar-badge {
+    font-size: 0.75rem;
+  }
+
+  .btn-clinic-export {
+    width: 100%;
+    padding: 0.85rem;
+  }
+
+  .stat-card {
+    padding: 0.85rem !important;
+  }
+
+  .stat-value {
+    font-size: 0.9rem !important;
+  }
+}
+@media (max-width: 375px) {
+  .title-group h1 {
+    font-size: 0.85rem !important;
+  }
+
+  .clinic-name {
+    font-size: 0.75rem;
+  }
+
+  .splash-content h1 {
+    font-size: 1.15rem;
+  }
+
+  .splash-content p {
+    font-size: 0.85rem;
+  }
+}
+
+.table-responsive {
+  width: 100%;
+  overflow-x: auto;
+
+  -webkit-overflow-scrolling: touch;
+
+  border-radius: 12px;
 }

@@ -1,4 +1,4 @@
-@use '../../styles/variables' as *;
+@use "../../styles/variables" as *;
 
 .table-wrapper {
   border-radius: $radius-md;
@@ -15,6 +15,7 @@
     border-collapse: separate;
     border-spacing: 0;
     font-size: 0.815rem;
+    min-width: 1200px;
 
     thead {
       position: sticky;
@@ -43,7 +44,7 @@
 
         &:hover {
           background-color: #f0f9ff !important; // Highlight dòng bằng màu xanh nhạt khi nhân sự rà chuột
-          
+
           .sticky-col {
             background-color: #f0f9ff !important;
           }
@@ -148,6 +149,11 @@
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-8px); }
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
 }

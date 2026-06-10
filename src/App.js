@@ -459,7 +459,10 @@ function App() {
         )}
 
         <main className="clinic-main-content">
-          <AttendanceTable data={data} daysInMonth={daysInMonth} />
+          <div className="table-responsive">
+            <AttendanceTable data={data} daysInMonth={daysInMonth} />
+          </div>
+          {/* <AttendanceTable data={data} daysInMonth={daysInMonth} /> */}
         </main>
       </div>
       {showSplash && <SplashScreen isExiting={isExiting} />}
