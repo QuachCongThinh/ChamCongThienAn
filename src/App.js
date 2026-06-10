@@ -1,8 +1,9 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import * as XLSX from "xlsx";
 import FileUpload from "./components/FileUpload/FileUpload";
 import AttendanceTable from "./components/AttendanceTable/AttendanceTable";
 import "./styles/main.scss";
+import SplashScreen from "./components/SplashScreen/SplashScreen.jsx";
 
 // Danh sách các khung giờ chuẩn được setup sẵn của viện
 const STANDARD_SHIFTS = [
@@ -38,10 +39,21 @@ function App() {
   const [thang, setThang] = useState("");
   const [daysInMonth, setDaysInMonth] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [showSplash, setShowSplash] = useState(true);
 
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setShowSplash(false);
+    }, 3500);
+
+    return () => clearTimeout(timer);
+  }, []);
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
+
+    // Lưu lại bản sao của target để tránh lỗi React Event Pooling
+    const targetInput = e.target;
 
     setLoading(true);
     const reader = new FileReader();
@@ -53,82 +65,133 @@ function App() {
       const ws = wb.Sheets[wsname];
       const rawData = XLSX.utils.sheet_to_json(ws, { header: 1 });
 
+      // 1. Xử lý dữ liệu và cập nhật State của React trước
       processRawLogData(rawData);
+
+      // 2. ✅ HOÃN RESET VALUE: Đợi React render xong dữ liệu mới giải phóng input
+      setTimeout(() => {
+        if (targetInput) {
+          targetInput.value = "";
+        }
+        setLoading(false);
+      }, 100);
+    };
+
+    reader.onerror = () => {
+      if (targetInput) targetInput.value = "";
+      setLoading(false);
     };
 
     reader.readAsBinaryString(file);
   };
 
-  // ĐÃ XÓA HÀM formatDecimalToTimeStr BỊ THỪA Ở ĐÂY ĐỂ TRÁNH LỖI ESLINT UNUSED-VARS
-
   // Hàm check quan trọng
   const matchStandardShift = (hoursArray) => {
     if (!hoursArray || hoursArray.length === 0) return "";
 
-    // Lấy chính xác giờ nhỏ nhất (vào) và lớn nhất (ra) trong ngày mà không phụ thuộc thứ tự log
+    // 1. Lấy chính xác giờ nhỏ nhất (vào) và lớn nhất (ra) trong ngày từ log nguyên bản
     const minHour = Math.min(...hoursArray);
     const maxHour = Math.max(...hoursArray);
 
-    // Làm tròn số để giảm bớt sai số hệ thống quẹt thẻ (làm tròn đến 1 chữ số thập phân)
-    const start = Math.round(minHour * 10) / 10;
-    const end = Math.round(maxHour * 10) / 10;
+    const start = minHour;
+    const end = maxHour;
 
     if (start >= end) return "";
 
-    // KIỂM TRA LÀM XUYÊN TRƯA: Có lượt khám/quẹt thẻ trong khung nghỉ trưa từ 11h05 đến 12h55 không
+    // 2. KIỂM TRA LÀM TRONG GIỜ TRƯA (Từ 11h01 đến 12h59 ~ 11.016 đến 12.983)
     const hasWorkDuringLunch = hoursArray.some(
-      (hour) => hour > 11.08 && hour < 12.92,
+      (hour) => hour >= 11.016 && hour <= 12.983,
     );
 
-    // Hàm định dạng giờ chuẩn hóa (Ví dụ: 11.1 -> 11h06, 11.5 -> 11h30)
+    // Hàm định dạng chuỗi giờ bảo hiểm phòng hờ
     const fmt = (dec) => {
       const h = Math.floor(dec);
       const m = Math.round((dec - h) * 60);
       if (m === 0) return `${h}h`;
-      return `${h}h${m < 10 ? "0" + m : m}`; // Sửa lỗi 16h6 thành 16h06 bằng cách thêm padStart '0'
+      return `${h}h${m < 10 ? "0" + m : m}`;
     };
 
-    // Mở rộng biên độ sai số lên 1.5 giờ đối với ca thẳng 7h-17h để nhận diện chính xác
-    // ngay cả khi nhân sự vào muộn (ví dụ 11h) hoặc về sớm, miễn là có làm xuyên trưa.
-    if (hasWorkDuringLunch) {
-      // Ưu tiên kiểm tra tuyệt đối xem có khớp ca thẳng 7h-17h không
-      const matchStart7h17h = Math.abs(start - 7.0) <= 4.5; // Cho phép linh hoạt giờ vào từ sáng đến trưa
-      const matchEnd7h17h = Math.abs(end - 17.0) <= 1.0;
+    // --- ƯU TIÊN ĐẶC BIỆT 1: ĐI SỚM TRƯỚC 7H (CA 6h30) ---
+    if (start >= 6.3 && start < 7.0 && end >= 15.5) {
+      return "6h30-11h/13h-16h30";
+    }
 
-      if (matchStart7h17h && matchEnd7h17h) {
+    // --- ƯU TIÊN ĐẶC BIỆT 2: CA CHIỀU ĐỘC LẬP ---
+    if (start >= 13.0) {
+      return "13h-17h";
+    }
+
+    // --- ƯU TIÊN ĐẶC BIỆT 3: CA SÁNG MUỘN (7H30 - 12H) (MỚI THÊM) ---
+    // Nếu bắt đầu sau 7h30 và kết thúc hẳn trước hoặc bằng 12h00 (Không có log chiều)
+    if (start > 7.5 && end <= 12.0) {
+      return "7h30-12h";
+    }
+
+    // --- ƯU TIÊN ĐẶC BIỆT 4: CA SÁNG SỚM/NGẮN VỀ TRƯỚC 11H ---
+    if (end <= 11.0) {
+      return "7h-11h";
+    }
+
+    // --- ƯU TIÊN ĐẶC BIỆT 5: CA LIỀN MẠCH KẾT THÚC SỚM (7H-15H) ---
+    if (start >= 7.0 && end <= 15.25) {
+      return "7h-15h";
+    }
+
+    // --- ƯU TIÊN ĐẶC BIỆT 6: NHÓM KHÔNG CÓ LÀM GIỜ TRƯA (Nghỉ trưa sạch) ---
+    if (!hasWorkDuringLunch) {
+      return "7h-11h/13h-17h";
+    }
+
+    // --- ƯU TIÊN ĐẶC BIỆT 7: NHÓM CÓ PHÁT SINH LÀM GIỜ TRƯA ---
+    if (hasWorkDuringLunch) {
+      // Tìm giờ quẹt cuối cùng của ca sáng (nằm trong khoảng từ 11h01 đến trước 12h05)
+      const morningLogs = hoursArray.filter((h) => h >= 11.016 && h <= 12.083);
+      const lastMorningLog =
+        morningLogs.length > 0 ? Math.max(...morningLogs) : 0;
+
+      // TH A: Nếu có quẹt giờ trưa nhưng giờ đó vẫn < 12h và bắt đầu sau 7h30 (Ca gãy đi cả ngày)
+      if (start > 7.5 && lastMorningLog > 0 && lastMorningLog <= 12.0) {
+        return "7h30-12h/13h-16h30";
+      }
+
+      // TH B: Nếu có quẹt giờ trưa xuyên suốt từ 11h - 13h (Làm full cả trưa), đi cả ngày
+      if (end >= 16.0) {
         return "7h-17h";
       }
     }
 
-    // DUYỆT KHỚP VỚI CÁC CA MẪU ĐÃ SETUP TRONG STANDARD_SHIFTS
+    // 3. THUẬT TOÁN ĐÁNH GIÁ ĐỘ KHỚP (BEST MATCHING) CHO CÁC TRƯỜNG HỢP CÒN LẠI
+    let bestShift = null;
+    let minScore = Infinity;
+
     for (const shift of STANDARD_SHIFTS) {
-      // Kiểm tra giờ vào và giờ ra có khớp biên độ sai số thông thường (tối đa 45 phút ~ 0.75h)
-      const matchStart = Math.abs(start - shift.startHour) <= 0.75;
-      const matchEnd = Math.abs(end - shift.endHour) <= 0.75;
+      let startDiff = 0;
+      if (start >= shift.startHour) {
+        startDiff = (start - shift.startHour) * 0.2;
+      } else {
+        startDiff = shift.startHour - start;
+      }
 
-      if (matchStart && matchEnd) {
-        // Nếu là ca gãy (có nghỉ trưa) nhưng dữ liệu thực tế lại làm xuyên trưa -> Bỏ qua để tìm ca thẳng
-        if (shift.isSplitShift && hasWorkDuringLunch) {
-          continue;
-        }
-        // Nếu là ca thẳng (xuyên trưa) nhưng thực tế không làm việc giờ trưa -> Bỏ qua để tìm ca gãy
-        if (
-          !shift.isSplitShift &&
-          shift.label === "7h-17h" &&
-          !hasWorkDuringLunch
-        ) {
-          continue;
-        }
+      const endDiff = Math.abs(end - shift.endHour);
+      const totalScore = startDiff + endDiff;
 
-        return shift.label;
+      if (start - shift.startHour > 1.5) continue;
+
+      if (totalScore < minScore) {
+        minScore = totalScore;
+        bestShift = shift;
       }
     }
 
-    // BẢO HIỂM: Nếu không khớp bất kỳ ca cấu hình sẵn nào, tự sinh chuỗi hiển thị linh hoạt
+    // 4. TRẢ VỀ KẾT QUẢ
+    if (bestShift && minScore <= 3.0) {
+      return bestShift.label;
+    }
+
+    // 5. BẢO HIỂM TỰ ĐỘNG (FALLBACK)
     if (hasWorkDuringLunch) {
       return `${fmt(start)}-${fmt(end)}`;
     } else {
-      // Tách chuỗi hiển thị dạng ca gãy nếu có khoảng trống lớn ở giữa giờ trưa
       const morningHours = hoursArray.filter((h) => h <= 11.5);
       const afternoonHours = hoursArray.filter((h) => h >= 12.5);
 
@@ -321,34 +384,59 @@ function App() {
 
     XLSX.writeFile(wb, `${fileName}.xlsx`);
   };
+  if (showSplash) {
+    return <SplashScreen />;
+  }
 
   return (
-    <div className="container">
-      <header className="header-tool">
-        <div>
-          <h1>CHECK CHẤM CÔNG - PHÒNG KHÁM THIÊN ÂN</h1>
-          <p>
-            {thang
-              ? `📅 ${thang.toUpperCase()}`
-              : "Vui lòng nạp file Excel hệ thống log"}
-          </p>
+    <div className="clinic-dashboard-container">
+      <header className="clinic-header">
+        <div className="brand-area">
+          <div className="medical-logo">
+            <span>✦</span>
+          </div>
+          <div className="title-group">
+            <h1>HỆ THỐNG KIỂM TRA CHẤM CÔNG NHÂN SỰ</h1>
+            <p className="subtitle">
+              <span className="clinic-name">PHÒNG KHÁM ĐA KHOA THIÊN ÂN</span>
+              {thang && (
+                <span className="calendar-badge">📅 {thang.toUpperCase()}</span>
+              )}
+            </p>
+          </div>
         </div>
 
-        <div
-          className="action-groups"
-          style={{ display: "flex", gap: "12px", alignItems: "center" }}
-        >
+        <div className="action-control-group">
           <FileUpload onUpload={handleFileUpload} loading={loading} />
 
           {data.length > 0 && (
-            <button className="btn-export" onClick={handleExportExcel}>
-              📥 Xuất file Excel
+            <button className="btn-clinic-export" onClick={handleExportExcel}>
+              <span className="icon">📥</span> Xuất Báo Cáo Excel
             </button>
           )}
         </div>
       </header>
 
-      <main>
+      {data.length > 0 && (
+        <section className="quick-stats-cards animate-fade-in">
+          <div className="stat-card">
+            <span className="stat-icon bs">🩺</span>
+            <div className="stat-info">
+              <span className="stat-label">Tổng nhân sự</span>
+              <span className="stat-value">{data.length} thành viên</span>
+            </div>
+          </div>
+          <div className="stat-card">
+            <span className="stat-icon range">📅</span>
+            <div className="stat-info">
+              <span className="stat-label">Thời gian hiển thị</span>
+              <span className="stat-value">{daysInMonth.length} ngày</span>
+            </div>
+          </div>
+        </section>
+      )}
+
+      <main className="clinic-main-content">
         <AttendanceTable data={data} daysInMonth={daysInMonth} />
       </main>
     </div>

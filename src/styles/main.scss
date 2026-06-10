@@ -1,67 +1,202 @@
-@import 'variables';
+@use 'variables' as *;
 
 body {
   margin: 0;
-  font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  font-family: 'Inter', system-ui, -apple-system, sans-serif;
   background-color: $bg-main;
   color: $text-dark;
   -webkit-font-smoothing: antialiased;
 }
 
-.container {
-  max-width: 1600px;
+.clinic-dashboard-container {
+  max-width: 1700px;
   margin: 0 auto;
   padding: 2rem;
 }
 
-.header-tool {
+// HEADER PHÒNG KHÁM CAO CẤP
+.clinic-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 2rem;
-  border-b: 1px solid $border-color;
-  padding-bottom: 1.5rem;
-  
-  h1 {
-    font-size: 1.8rem;
-    margin: 0 0 0.5rem 0;
-    color: $text-dark;
-  }
-  
-  p {
-    margin: 0;
-    color: $text-muted;
-    font-weight: 500;
+  background: $bg-card;
+  padding: 1.25rem 2rem;
+  border-radius: $radius-lg;
+  box-shadow: $shadow-sm;
+  border: 1px solid $border-color;
+  margin-bottom: 1.5rem;
+
+  .brand-area {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+
+    .medical-logo {
+      width: 45px;
+      height: 45px;
+      background: $primary-light;
+      color: $primary-color;
+      border-radius: $radius-md;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      font-weight: bold;
+    }
+
+    .title-group {
+      h1 {
+        margin: 0;
+        font-size: 1.3rem;
+        font-weight: 800;
+        letter-spacing: -0.5px;
+        color: $text-dark;
+      }
+      .subtitle {
+        margin: 0.2rem 0 0 0;
+        display: flex;
+        align-items: center;
+        gap: 0.75rem;
+        font-size: 0.875rem;
+
+        .clinic-name {
+          color: $secondary-color;
+          font-weight: 700;
+        }
+        .calendar-badge {
+          background-color: #f1f5f9;
+          padding: 2px 8px;
+          border-radius: $radius-sm;
+          color: $text-muted;
+          font-weight: 600;
+        }
+      }
+    }
   }
 }
-.action-groups {
+
+.action-control-group {
   display: flex;
-  gap: 12px;
+  gap: 0.75rem;
   align-items: center;
 }
 
-.btn-export {
+// NÚT XUẤT EXCEL THIẾT KẾ PHẲNG (FLAT DESIGN) SANG TRỌNG
+.btn-clinic-export {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  padding: 10px 16px;
-  background-color: #107c41; // Màu xanh lá đặc trưng của Microsoft Excel
-  color: #ffffff;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  background-color: #166534; // Màu xanh lá đằm chuyên nghiệp
+  color: $white;
   font-weight: 600;
-  font-size: 14px;
+  font-size: 0.875rem;
   border: none;
-  border-radius: 6px;
+  border-radius: $radius-md;
   cursor: pointer;
-  transition: all 0.2s ease-in-out;
-  box-shadow: 0 2px 6px rgba(16, 124, 65, 0.2);
+  
+  // Thiết lập môi trường để chạy lớp ánh sáng ngầm
+  position: relative;
+  overflow: hidden; 
+  box-shadow: 0 4px 6px -1px rgba(22, 101, 52, 0.15);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  // Tạo dải sáng trắng trong suốt nghiêng 45 độ ẩn bên trái nút
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 50%;
+    height: 100%;
+    background: linear-gradient(
+      90deg,
+      rgba($white, 0) 0%,
+      rgba($white, 0.25) 50%,
+      rgba($white, 0) 100%
+    );
+    transform: skewX(-25deg);
+  }
 
   &:hover {
-    background-color: #0b592e;
-    transform: translateY(-1px);
-    box-shadow: 0 4px 8px rgba(16, 124, 65, 0.3);
+    background-color: #14532d;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px -4px rgba(20, 83, 45, 0.3);
+
+    // Khi hover, kích hoạt dải sáng quét từ trái sang phải
+    &::before {
+      left: 150%;
+      transition: left 0.65s ease-in-out;
+    }
+
+    // Tạo chuyển động nhỏ cho icon 📥 như đang tải xuống
+    .icon {
+      animation: bounceDownload 0.6s ease infinite alternate;
+    }
   }
 
   &:active {
-    transform: translateY(0);
+    transform: translateY(-0.5px);
+    box-shadow: 0 4px 6px -1px rgba(20, 83, 45, 0.2);
   }
+}
+
+// Khung chuyển động nhấp nhô nhẹ cho icon tải xuống
+@keyframes bounceDownload {
+  from { transform: translateY(0); }
+  to { transform: translateY(2px); }
+}
+
+// CARD THỐNG KÊ NHANH
+.quick-stats-cards {
+  display: flex;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+
+  .stat-card {
+    background: $bg-card;
+    padding: 1rem 1.5rem;
+    border-radius: $radius-md;
+    border: 1px solid $border-color;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    min-width: 240px;
+
+    .stat-icon {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      &.bs { background: #e0f2fe; }
+      &.range { background: #fef3c7; }
+    }
+
+    .stat-info {
+      display: flex;
+      flex-direction: column;
+      .stat-label { font-size: 0.75rem; color: $text-muted; font-weight: 500; }
+      .stat-value { font-size: 1rem; color: $text-dark; font-weight: 700; }
+    }
+  }
+}
+
+// BỌC KHU VỰC BẢNG CHÍNH
+.clinic-main-content {
+  background: $bg-card;
+  border-radius: $radius-lg;
+  padding: 1.25rem;
+  box-shadow: $shadow-md;
+  border: 1px solid $border-color;
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.3s ease-out forwards;
+}
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
 }

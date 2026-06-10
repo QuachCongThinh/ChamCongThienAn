@@ -1,17 +1,34 @@
-// Màu sắc chủ đạo
-$primary-color: #4f46e5; // Indigo
-$primary-hover: #4338ca;
-$bg-main: #f8fafc;
+// --- HỆ MÀU Y TẾ CAO CẤP (Clinical Palette) ---
+$primary-color: #0284c7; // Xanh Sky đại diện cho sự tin tưởng, công nghệ
+$primary-hover: #0335a1; // Xanh đậm hơn khi Hover
+$primary-light: #f0f9ff; // Nền xanh nhạt mịn màng
+$secondary-color: #d40101; // Xanh Teal bổ trợ y tế
+$bg-main: #f8fafc; // Nền xám xanh nhạt dịu mắt, chống mỏi mắt
+$bg-card: #ffffff;
 $white: #ffffff;
-$border-color: #e2e8f0;
-$text-dark: #0f172a;
-$text-muted: #64748b;
 
-// Màu chức danh
-$color-bs-bg: #ecfdf5;
-$color-bs-text: #047857;
-$color-ktv-bg: #fff7ed;
-$color-ktv-text: #c2410c;
+// --- TRẠNG THÁI CA LÀM VIỆC (Màu pastel nhẹ nhàng, tinh tế) ---
+$color-bs-bg: #e0f2fe; // Ca Bác sĩ
+$color-bs-text: #0369a1;
+$color-ktv-bg: #f0fdf4; // Ca KTV
+$color-ktv-text: #166534;
+$color-active-bg: #f5f3ff; // Ô có lịch làm việc
+$color-active-text: #5b21b6;
 
-// Hiệu ứng transition
+// --- CHỮ & ĐƯỜNG VIỀN ---
+$text-dark: #0f172a; // Chữ chính (Slate 900 rất sang)
+$text-muted: #64748b; // Chữ phụ, ghi chú
+$border-color: #e2e8f0; // Đường viền siêu mảnh
+
+// --- HIỆU ỨNG & BO GÓC ---
+$radius-lg: 16px;
+$radius-md: 10px;
+$radius-sm: 6px;
+$shadow-sm:
+  0 1px 3px 0 rgba(0, 0, 0, 0.05),
+  0 1px 2px -1px rgba(0, 0, 0, 0.05);
+$shadow-md:
+  0 10px 15px -3px rgba(15, 23, 42, 0.05),
+  0 4px 6px -4px rgba(15, 23, 42, 0.05);
 $transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+

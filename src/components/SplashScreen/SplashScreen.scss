@@ -1,0 +1,160 @@
+.splash-screen {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  background: #f4f6f9;
+}
+
+.splash-content {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+
+  animation: fadeIn 0.8s ease;
+}
+
+.splash-logo {
+  width: 140px;
+  height: 140px;
+  object-fit: contain;
+
+  margin-bottom: 1rem;
+
+  animation: floatLogo 2.5s ease-in-out infinite;
+}
+
+.splash-content h1 {
+  margin: 0;
+
+  font-size: 2.6rem;
+  font-weight: 900;
+  letter-spacing: 1px;
+
+  color: #e11d48;
+  text-transform: uppercase;
+}
+
+.splash-content p {
+  margin-top: 1rem;
+  margin-bottom: 2rem;
+
+  font-size: 1.35rem;
+  color: #1e3a8a;
+  font-weight: 500;
+}
+
+/* KHỐI LOADING */
+.loading-wrapper {
+  width: 720px;
+  max-width: 90vw;
+}
+
+.loading-bar {
+  width: 100%;
+  height: 12px;
+
+  background: #e5e7eb;
+
+  border-radius: 999px;
+  overflow: hidden;
+
+  box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.loading-progress {
+  height: 100%;
+
+  border-radius: inherit;
+
+  background: linear-gradient(90deg, #2563eb, #3b82f6, #60a5fa);
+
+  transition: width 0.03s linear;
+}
+
+.loading-info {
+  margin-top: 12px;
+
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  font-size: 0.95rem;
+  font-weight: 600;
+
+  color: #64748b;
+}
+/* DÒNG CHỮ ĐANG TẢI */
+.loading-text {
+  margin-top: 18px;
+
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+
+  height: 28px;
+}
+
+.loading-text span {
+  position: absolute;
+
+  color: #64748b;
+  font-size: 1rem;
+  font-weight: 600;
+
+  white-space: nowrap;
+
+  animation: moveText 3s linear infinite;
+}
+
+/* HIỆU ỨNG CHẠY */
+@keyframes moveText {
+  from {
+    left: -180px;
+  }
+
+  to {
+    left: 100%;
+  }
+}
+
+@keyframes loading {
+  from {
+    width: 0%;
+  }
+
+  to {
+    width: 100%;
+  }
+}
+
+@keyframes floatLogo {
+  0% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-8px);
+  }
+
+  100% {
+    transform: translateY(0);
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

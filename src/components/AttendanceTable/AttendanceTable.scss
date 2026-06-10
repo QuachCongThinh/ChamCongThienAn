@@ -1,80 +1,35 @@
-@import '../../styles/variables';
+@use '../../styles/variables' as *;
 
-// Hiệu ứng Animation Keyframes
-@keyframes slideUp {
-  from {
-    opacity: 0;
-    transform: translateY(20px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
-.animate-slide-up {
-  animation: slideUp 0.4s cubic-bezier(0.16, 1, 0.3, 1) forwards;
-}
-
-.animate-fade-in {
-  animation: fadeIn 0.3s ease-in forwards;
-}
-
-// Thiết kế trạng thái chưa có dữ liệu
-.empty-state {
-  background: $white;
-  border: 2px dashed #cbd5e1;
-  border-radius: 12px;
-  padding: 4rem 2rem;
-  text-align: center;
-  max-width: 500px;
-  margin: 3rem auto;
-  
-  .icon-box {
-    font-size: 3rem;
-    margin-bottom: 1rem;
-  }
-  h3 { margin: 0 0 0.5rem 0; color: $text-dark; }
-  p { margin: 0; color: $text-muted; font-size: 0.95rem; }
-}
-
-// Thiết kế Table chính
 .table-wrapper {
-  background: $white;
-  border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.05), 0 1px 2px rgba(0,0,0,0.02);
+  border-radius: $radius-md;
   border: 1px solid $border-color;
   overflow: hidden;
 
   .table-responsive {
     overflow-x: auto;
-    max-height: 72vh;
+    max-height: 68vh; // Chiều cao tối ưu để lướt mượt không mất Header
   }
 
   table {
     width: 100%;
     border-collapse: separate;
     border-spacing: 0;
-    font-size: 0.875rem;
-    text-align: left;
+    font-size: 0.815rem;
 
     thead {
-      background-color: #f1f5f9;
       position: sticky;
       top: 0;
       z-index: 10;
 
       th {
-        padding: 0.75rem 0.5rem;
-        font-weight: 600;
-        color: #334155;
+        background-color: #f8fafc;
+        padding: 0.85rem 0.5rem;
+        font-weight: 700;
+        color: #475569;
         border-bottom: 2px solid $border-color;
+        border-right: 1px solid #f1f5f9;
         text-align: center;
+        white-space: nowrap;
       }
     }
 
@@ -87,10 +42,10 @@
         }
 
         &:hover {
-          background-color: #f1f5f9 !important;
+          background-color: #f0f9ff !important; // Highlight dòng bằng màu xanh nhạt khi nhân sự rà chuột
           
           .sticky-col {
-            background-color: #f1f5f9 !important;
+            background-color: #f0f9ff !important;
           }
         }
       }
@@ -98,11 +53,12 @@
       td {
         padding: 0.65rem 0.5rem;
         border-bottom: 1px solid $border-color;
-        border-r: 1px solid #f1f5f9;
+        border-right: 1px solid #f1f5f9;
+        vertical-align: middle;
       }
     }
 
-    // Các lớp định vị Freeze Panes (Cố định cột STT và Tên)
+    // ĐÓNG BĂNG CỘT STT VÀ HỌ TÊN (Freeze Panes mượt như Excel nâng cao)
     .sticky-col {
       position: sticky;
       background-color: $white;
@@ -112,55 +68,86 @@
         left: 0;
         width: 50px;
         min-width: 50px;
-        border-right: 1px solid $border-color;
+        text-align: center;
+        font-weight: 600;
+        color: $text-muted;
       }
 
       &.name-col {
         left: 50px;
-        min-width: 200px;
-        border-right: 2px solid $border-color;
+        min-width: 220px;
+        font-weight: 600;
+        color: $text-dark;
         text-align: left;
-        padding-left: 1rem;
+        padding-left: 1.25rem;
+        box-shadow: 4px 0 8px -4px rgba(15, 23, 42, 0.08); // Tạo độ bóng nhẹ ngăn cách vùng cuộn
       }
     }
 
     thead th.sticky-col {
-      background-color: #f1f5f9;
+      background-color: #f8fafc;
       z-index: 5;
     }
 
-    // Định dạng nội dung ô dữ liệu
-    .cell-center { text-align: center; }
-    .font-bold { font-weight: 600; color: $text-dark; }
-    
-    .day-col { min-width: 120px; }
-    .role-col { min-width: 90px; }
-
-    .badge {
-      display: inline-block;
-      padding: 0.2rem 0.5rem;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 700;
-
-      &-bs { background-color: $color-bs-bg; color: $color-bs-text; }
-      &-ktv { background-color: $color-ktv-bg; color: $color-ktv-text; }
-    }
-
+    // Ô HIỂN THỊ CA LÀM VIỆC (Được bọc thành nhãn viên thuốc)
     .cell-shift {
       text-align: center;
-      font-size: 0.75rem;
-      transition: $transition-smooth;
+      min-width: 130px;
 
-      &.active {
-        background-color: rgba(79, 70, 229, 0.04);
-        color: #1e1b4b;
-        font-weight: 500;
+      .shift-badge {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: $radius-sm;
+        font-weight: 600;
+        font-size: 0.75rem;
+        background-color: $color-active-bg;
+        color: $color-active-text;
+        border: 1px solid rgba($color-active-text, 0.08);
+        transition: $transition-smooth;
+
+        // Nếu ca ngắn làm nửa buổi thì đổi tone màu sang vàng nhẹ để dễ phân biệt
+        &.half-shift {
+          background-color: #fffbeb;
+          color: #b45309;
+          border-color: rgba(#b45309, 0.08);
+        }
       }
 
-      &.empty {
+      .empty-dash {
         color: #cbd5e1;
+        font-weight: 400;
       }
     }
   }
+}
+
+// Giao diện tinh tế khi chưa tải file lên
+.empty-state {
+  padding: 5rem 2rem;
+  text-align: center;
+  max-width: 420px;
+  margin: 4rem auto;
+
+  .icon-box {
+    font-size: 3.5rem;
+    margin-bottom: 1.25rem;
+    animation: float 3s ease-in-out infinite;
+  }
+  h3 {
+    margin: 0 0 0.5rem 0;
+    font-size: 1.25rem;
+    color: $text-dark;
+    font-weight: 700;
+  }
+  p {
+    margin: 0;
+    color: $text-muted;
+    font-size: 0.875rem;
+    line-height: 1.5;
+  }
+}
+
+@keyframes float {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-8px); }
 }
