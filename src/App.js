@@ -7,33 +7,17 @@ import SplashScreen from "./components/SplashScreen/SplashScreen.jsx";
 
 // Danh sách các khung giờ chuẩn được setup sẵn của viện
 const STANDARD_SHIFTS = [
-  {
-    label: "6h30-11h/13h-16h30",
-    startHour: 6.5,
-    endHour: 16.5,
-    isSplitShift: true,
-  },
-  {
-    label: "7h-11h/13h-17h",
-    startHour: 7.0,
-    endHour: 17.0,
-    isSplitShift: true,
-  },
-  { label: "7h-17h", startHour: 7.0, endHour: 17.0, isSplitShift: false },
-  { label: "7h-11h", startHour: 7.0, endHour: 11.0, isSplitShift: false },
-  { label: "13h-17h", startHour: 13.0, endHour: 17.0, isSplitShift: false },
-  { label: "7h30-12h", startHour: 7.5, endHour: 12.0, isSplitShift: false },
-  {
-    label: "7h30-12h/13h-16h30",
-    startHour: 7.5,
-    endHour: 16.5,
-    isSplitShift: true,
-  },
-  { label: "7h30-16h30", startHour: 7.5, endHour: 16.5, isSplitShift: false },
-  { label: "11h-17h", startHour: 11.0, endHour: 17.0, isSplitShift: false },
-  { label: "7h-15h", startHour: 7.0, endHour: 15.0, isSplitShift: false },
+  { label: "6h30-11h/13h-16h30", startHour: 6.5, endHour: 16.5 },
+  { label: "7h-11h/13h-17h", startHour: 7.0, endHour: 17.0 },
+  { label: "7h-17h", startHour: 7.0, endHour: 17.0 },
+  { label: "7h-11h", startHour: 7.0, endHour: 11.0 },
+  { label: "13h-17h", startHour: 13.0, endHour: 17.0 },
+  { label: "7h30-12h", startHour: 7.5, endHour: 12.0 },
+  { label: "7h30-12h/13h-16h30", startHour: 7.5, endHour: 16.5 },
+  { label: "7h30-16h30", startHour: 7.5, endHour: 16.5 },
+  { label: "11h-17h", startHour: 11.0, endHour: 17.0 },
+  { label: "7h-15h", startHour: 7.0, endHour: 15.0 },
 ];
-
 function App() {
   const [data, setData] = useState([]);
   const [thang, setThang] = useState("");
@@ -42,6 +26,7 @@ function App() {
   const [showSplash, setShowSplash] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
   const [activeTab, setActiveTab] = useState("attendance");
+  const [searchTerm, setSearchTerm] = useState("");
 
   useEffect(() => {
     const startExit = setTimeout(() => {
@@ -58,13 +43,6 @@ function App() {
     };
   }, []);
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowSplash(false);
-    }, 4000);
-
-    return () => clearTimeout(timer);
-  }, []);
   const handleFileUpload = (e) => {
     const file = e.target.files[0];
     if (!file) return;
@@ -375,7 +353,6 @@ function App() {
     });
 
     setData(finalStaffList);
-    setLoading(false);
   };
 
   const convertShiftToSymbol = (shift) => {
@@ -458,11 +435,11 @@ function App() {
   if (showSplash) {
     return <SplashScreen isExiting={isExiting} />;
   }
+  const filteredData = data.filter((item) =>
+    item.hoTen.toLowerCase().includes(searchTerm.toLowerCase()),
+  );
   return (
     <>
-      <div
-        className={`app-shell ${!showSplash ? "app-shell-visible" : ""}`}
-      ></div>
       <div className="clinic-dashboard-container">
         <header className="clinic-header">
           <div className="brand-area">
@@ -515,10 +492,25 @@ function App() {
             📊 Thống kê
           </button>
         </section>
+
+        {(activeTab === "attendance" || activeTab === "symbol") && (
+          <div className="search-bar">
+            <input
+              type="text"
+              placeholder="🔍 Tìm bác sĩ hoặc KTV..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+
+            <span className="search-count">
+              {filteredData.length} / {data.length}
+            </span>
+          </div>
+        )}
         <main className="clinic-main-content">
           {activeTab === "attendance" && (
             <div className="table-responsive">
-              <AttendanceTable data={data} daysInMonth={daysInMonth} />
+              <AttendanceTable data={filteredData} daysInMonth={daysInMonth} />
             </div>
           )}
 
@@ -557,7 +549,7 @@ function App() {
                 </thead>
 
                 <tbody>
-                  {data.map((row) => (
+                  {filteredData.map((row) => (
                     <tr key={row.stt}>
                       <td>{row.stt}</td>
 
@@ -581,7 +573,6 @@ function App() {
           )}
         </main>
       </div>
-      {showSplash && <SplashScreen isExiting={isExiting} />}
     </>
   );
 }

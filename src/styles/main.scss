@@ -169,55 +169,6 @@ body {
   }
 }
 
-// CARD THỐNG KÊ NHANH
-.quick-stats-cards {
-  display: flex;
-  gap: 1rem;
-  margin-bottom: 1.5rem;
-
-  .stat-card {
-    background: $bg-card;
-    padding: 1rem 1.5rem;
-    border-radius: $radius-md;
-    border: 1px solid $border-color;
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    min-width: 240px;
-
-    .stat-icon {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 1.2rem;
-      &.bs {
-        background: #e0f2fe;
-      }
-      &.range {
-        background: #fef3c7;
-      }
-    }
-
-    .stat-info {
-      display: flex;
-      flex-direction: column;
-      .stat-label {
-        font-size: 0.75rem;
-        color: $text-muted;
-        font-weight: 500;
-      }
-      .stat-value {
-        font-size: 1rem;
-        color: $text-dark;
-        font-weight: 700;
-      }
-    }
-  }
-}
-
 // BỌC KHU VỰC BẢNG CHÍNH
 .clinic-main-content {
   background: $bg-card;
@@ -262,19 +213,6 @@ body {
     filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.25));
   }
 }
-.app-shell {
-  opacity: 0;
-  transform: translateY(8px);
-
-  transition:
-    opacity 0.45s ease,
-    transform 0.45s ease;
-}
-
-.app-shell-visible {
-  opacity: 1;
-  transform: translateY(0);
-}
 
 //////Responsive
 @media (max-width: 992px) {
@@ -312,15 +250,6 @@ body {
   .btn-clinic-export {
     width: 100%;
     justify-content: center;
-  }
-
-  .quick-stats-cards {
-    flex-direction: column;
-  }
-
-  .quick-stats-cards .stat-card {
-    min-width: unset;
-    // width: 100%;
   }
 }
 @media (max-width: 576px) {
@@ -538,14 +467,69 @@ body {
   font-size: 15px;
 }
 
-.symbol-X {
+.symbol-x {
   color: #16a34a;
 }
 
-.symbol-S {
+.symbol-s {
   color: #2563eb;
 }
 
-.symbol-C {
+.symbol-c {
   color: #dc2626;
+}
+.search-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  gap: 1rem;
+
+  margin-bottom: 1rem;
+}
+
+.search-bar input {
+  flex: 1;
+
+  padding: 0.85rem 1rem;
+
+  border: 1px solid #dbe2ea;
+
+  border-radius: 12px;
+
+  font-size: 14px;
+
+  outline: none;
+
+  transition: all 0.25s ease;
+}
+
+.search-bar input:focus {
+  border-color: #2563eb;
+
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.08);
+}
+
+.search-count {
+  color: #64748b;
+
+  font-size: 14px;
+
+  font-weight: 600;
+}
+@media (max-width: 768px) {
+  .search-bar {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.75rem;
+  }
+
+  .search-count {
+    text-align: center;
+  }
+}
+@media (max-width: 768px) {
+  .statistics-grid {
+    grid-template-columns: 1fr;
+  }
 }
