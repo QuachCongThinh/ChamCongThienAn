@@ -158,20 +158,47 @@ function App() {
       return "7h-11h/13h-17h";
     }
 
+    // // --- ƯU TIÊN ĐẶC BIỆT 7: NHÓM CÓ PHÁT SINH LÀM GIỜ TRƯA ---
+    // if (hasWorkDuringLunch) {
+    //   // Tìm giờ quẹt cuối cùng của ca sáng (nằm trong khoảng từ 11h01 đến trước 12h05)
+    //   const morningLogs = hoursArray.filter((h) => h >= 11.016 && h <= 12.083);
+    //   const lastMorningLog =
+    //     morningLogs.length > 0 ? Math.max(...morningLogs) : 0;
+
+    //   // TH A: Nếu có quẹt giờ trưa nhưng giờ đó vẫn < 12h và bắt đầu sau 7h30 (Ca gãy đi cả ngày)
+    //   if (start > 7.5 && lastMorningLog > 0 && lastMorningLog <= 12.0) {
+    //     return "7h30-12h/13h-16h30";
+    //   }
+
+    //   // TH B: Nếu có quẹt giờ trưa xuyên suốt từ 11h - 13h (Làm full cả trưa), đi cả ngày
+    //   if (end >= 16.0) {
+    //     return "7h-17h";
+    //   }
+    // }
     // --- ƯU TIÊN ĐẶC BIỆT 7: NHÓM CÓ PHÁT SINH LÀM GIỜ TRƯA ---
     if (hasWorkDuringLunch) {
-      // Tìm giờ quẹt cuối cùng của ca sáng (nằm trong khoảng từ 11h01 đến trước 12h05)
       const morningLogs = hoursArray.filter((h) => h >= 11.016 && h <= 12.083);
+
       const lastMorningLog =
         morningLogs.length > 0 ? Math.max(...morningLogs) : 0;
 
-      // TH A: Nếu có quẹt giờ trưa nhưng giờ đó vẫn < 12h và bắt đầu sau 7h30 (Ca gãy đi cả ngày)
+      // ===== CA 11H-17H =====
+      if (start >= 11.0 && start < 13.0 && end <= 17.0) {
+        return "11h-17h";
+      }
+
+      // ===== CA 7H30-16H30 =====
+      if (start > 7.5 && end <= 16.5) {
+        return "7h30-16h30";
+      }
+
+      // ===== CA GÃY 7H30 =====
       if (start > 7.5 && lastMorningLog > 0 && lastMorningLog <= 12.0) {
         return "7h30-12h/13h-16h30";
       }
 
-      // TH B: Nếu có quẹt giờ trưa xuyên suốt từ 11h - 13h (Làm full cả trưa), đi cả ngày
-      if (end >= 16.0) {
+      // ===== CA LIỀN MẠCH 7H-17H =====
+      if (start < 7.5 && end >= 16.0) {
         return "7h-17h";
       }
     }
@@ -462,7 +489,6 @@ function App() {
           <div className="table-responsive">
             <AttendanceTable data={data} daysInMonth={daysInMonth} />
           </div>
-          {/* <AttendanceTable data={data} daysInMonth={daysInMonth} /> */}
         </main>
       </div>
       {showSplash && <SplashScreen isExiting={isExiting} />}
