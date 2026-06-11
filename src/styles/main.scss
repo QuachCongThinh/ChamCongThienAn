@@ -320,7 +320,7 @@ body {
 
   .quick-stats-cards .stat-card {
     min-width: unset;
-    width: 100%;
+    // width: 100%;
   }
 }
 @media (max-width: 576px) {
@@ -389,4 +389,163 @@ body {
   -webkit-overflow-scrolling: touch;
 
   border-radius: 12px;
+}
+
+/* ========================================
+   DASHBOARD TABS
+======================================== */
+
+.dashboard-tabs {
+  display: flex;
+  gap: 0.75rem;
+
+  margin-bottom: 1.5rem;
+}
+
+.tab {
+  border: none;
+
+  padding: 0.8rem 1.25rem;
+
+  border-radius: 12px;
+
+  background: white;
+
+  color: #64748b;
+
+  font-weight: 600;
+
+  cursor: pointer;
+
+  border: 1px solid #e2e8f0;
+
+  transition: all 0.25s ease;
+}
+
+.tab:hover {
+  background: #f8fafc;
+}
+
+.tab.active {
+  background: #2563eb;
+  color: white;
+  border-color: #2563eb;
+
+  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+}
+
+/* ========================================
+   STATISTICS SCREEN
+======================================== */
+
+.statistics-header {
+  margin-bottom: 1.5rem;
+
+  h2 {
+    margin: 0;
+    color: #0f172a;
+  }
+
+  p {
+    margin-top: 0.5rem;
+    color: #64748b;
+  }
+}
+
+.statistics-grid {
+  display: grid;
+
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+
+  gap: 1rem;
+}
+
+.stats-box {
+  background: white;
+
+  border: 1px solid #e5e7eb;
+
+  border-radius: 16px;
+
+  padding: 1.25rem;
+
+  box-shadow: 0 4px 12px rgba(15, 23, 42, 0.04);
+
+  h3 {
+    margin: 0 0 1rem;
+    color: #334155;
+    font-size: 0.95rem;
+  }
+
+  span {
+    font-size: 2rem;
+    font-weight: 700;
+    color: #2563eb;
+  }
+
+  p {
+    color: #64748b;
+    margin: 0;
+    line-height: 1.6;
+  }
+}
+
+/* ========================================
+   MOBILE
+======================================== */
+
+@media (max-width: 576px) {
+  .dashboard-tabs {
+    overflow-x: auto;
+    white-space: nowrap;
+
+    padding-bottom: 4px;
+  }
+
+  .tab {
+    flex-shrink: 0;
+  }
+
+  .statistics-grid {
+    grid-template-columns: 1fr;
+  }
+}
+.symbol-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.symbol-table th,
+.symbol-table td {
+  border: 1px solid #e5e7eb;
+  padding: 8px;
+  text-align: center;
+}
+
+.symbol-table th {
+  background: #f8fafc;
+  font-weight: 700;
+}
+
+.symbol-table td:nth-child(2),
+.symbol-table th:nth-child(2) {
+  text-align: left;
+  min-width: 250px;
+}
+
+.symbol-cell {
+  font-weight: 800;
+  font-size: 15px;
+}
+
+.symbol-X {
+  color: #16a34a;
+}
+
+.symbol-S {
+  color: #2563eb;
+}
+
+.symbol-C {
+  color: #dc2626;
 }

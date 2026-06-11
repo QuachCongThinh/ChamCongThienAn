@@ -41,15 +41,16 @@ function App() {
   const [loading, setLoading] = useState(false);
   const [showSplash, setShowSplash] = useState(true);
   const [isExiting, setIsExiting] = useState(false);
+  const [activeTab, setActiveTab] = useState("attendance");
 
   useEffect(() => {
     const startExit = setTimeout(() => {
       setIsExiting(true);
-    }, 3000);
+    }, 4000);
 
     const removeSplash = setTimeout(() => {
       setShowSplash(false);
-    }, 3500);
+    }, 4500);
 
     return () => {
       clearTimeout(startExit);
@@ -377,6 +378,34 @@ function App() {
     setLoading(false);
   };
 
+  const convertShiftToSymbol = (shift) => {
+    if (!shift) return "";
+
+    switch (shift) {
+      // Nguyên ngày
+      case "7h-17h":
+      case "6h30-11h/13h-16h30":
+      case "7h30-16h30":
+      case "7h-15h":
+      case "7h30-12h/13h-16h30":
+      case "7h-11h/13h-17h":
+        return "x";
+
+      // Ca sáng
+      case "7h-11h":
+      case "7h30-12h":
+        return "s";
+
+      // Ca chiều
+      case "13h-17h":
+      case "11h-17h":
+        return "c";
+
+      default:
+        return "";
+    }
+  };
+
   const handleExportExcel = () => {
     if (data.length === 0) return;
 
@@ -388,25 +417,40 @@ function App() {
 
     const dataRows = data.map((item) => {
       const row = [item.stt, item.hoTen];
+
       daysInMonth.forEach((day) => {
-        row.push(item.schedule[day] || "");
+        if (activeTab === "symbol") {
+          row.push(convertShiftToSymbol(item.schedule[day]));
+        } else {
+          row.push(item.schedule[day] || "");
+        }
       });
+
       return row;
     });
 
     const worksheetData = [headerRow, ...dataRows];
+
     const ws = XLSX.utils.aoa_to_sheet(worksheetData);
 
-    const colWidths = [
+    ws["!cols"] = [
       { wch: 6 },
       { wch: 28 },
-      ...daysInMonth.map(() => ({ wch: 16 })),
+      ...daysInMonth.map(() => ({
+        wch: activeTab === "symbol" ? 6 : 16,
+      })),
     ];
-    ws["!cols"] = colWidths;
 
     const wb = XLSX.utils.book_new();
-    const fileName = `Bang_Cham_Cong_${thang.replace(/\s+/g, "").replace("/", "_")}`;
-    XLSX.utils.book_append_sheet(wb, ws, "Chấm Công");
+
+    const sheetName = activeTab === "symbol" ? "Quy Doi Cong" : "Cham Cong";
+
+    XLSX.utils.book_append_sheet(wb, ws, sheetName);
+
+    const fileName =
+      activeTab === "symbol"
+        ? `Bang_Cong_Quy_Doi_${thang.replace(/\s+/g, "").replace("/", "_")}`
+        : `Bang_Cham_Cong_${thang.replace(/\s+/g, "").replace("/", "_")}`;
 
     XLSX.writeFile(wb, `${fileName}.xlsx`);
   };
@@ -449,29 +493,92 @@ function App() {
           </div>
         </header>
 
-        {data.length > 0 && (
-          <section className="quick-stats-cards animate-fade-in">
-            <div className="stat-card">
-              <span className="stat-icon bs">🩺</span>
-              <div className="stat-info">
-                <span className="stat-label">Tổng nhân sự</span>
-                <span className="stat-value">{data.length} thành viên</span>
-              </div>
-            </div>
-            <div className="stat-card">
-              <span className="stat-icon range">📅</span>
-              <div className="stat-info">
-                <span className="stat-label">Thời gian hiển thị</span>
-                <span className="stat-value">{daysInMonth.length} ngày</span>
-              </div>
-            </div>
-          </section>
-        )}
+        <section className="dashboard-tabs">
+          <button
+            className={`tab ${activeTab === "attendance" ? "active" : ""}`}
+            onClick={() => setActiveTab("attendance")}
+          >
+            📋 Chấm công
+          </button>
 
+          <button
+            className={`tab ${activeTab === "symbol" ? "active" : ""}`}
+            onClick={() => setActiveTab("symbol")}
+          >
+            🔤 Quy đổi công
+          </button>
+
+          <button
+            className={`tab ${activeTab === "statistics" ? "active" : ""}`}
+            onClick={() => setActiveTab("statistics")}
+          >
+            📊 Thống kê
+          </button>
+        </section>
         <main className="clinic-main-content">
-          <div className="table-responsive">
-            <AttendanceTable data={data} daysInMonth={daysInMonth} />
-          </div>
+          {activeTab === "attendance" && (
+            <div className="table-responsive">
+              <AttendanceTable data={data} daysInMonth={daysInMonth} />
+            </div>
+          )}
+
+          {activeTab === "statistics" && (
+            <div className="statistics-screen animate-fade-in">
+              <div className="statistics-header">
+                <h2>📊 Báo cáo thống kê</h2>
+                <p>Khu vực này dùng để hiển thị tổng hợp dữ liệu chấm công.</p>
+              </div>
+
+              <div className="statistics-grid">
+                <div className="stats-box">
+                  <h3>Tổng nhân sự</h3>
+                  <span>{data.length}</span>
+                </div>
+
+                <div className="stats-box">
+                  <h3>Số ngày trong tháng</h3>
+                  <span>{daysInMonth.length}</span>
+                </div>
+              </div>
+            </div>
+          )}
+          {activeTab === "symbol" && (
+            <div className="table-responsive">
+              <table className="symbol-table">
+                <thead>
+                  <tr>
+                    <th>STT</th>
+                    <th>Họ và tên</th>
+
+                    {daysInMonth.map((day) => (
+                      <th key={day}>{day}</th>
+                    ))}
+                  </tr>
+                </thead>
+
+                <tbody>
+                  {data.map((row) => (
+                    <tr key={row.stt}>
+                      <td>{row.stt}</td>
+
+                      <td>{row.hoTen}</td>
+
+                      {daysInMonth.map((day) => (
+                        <td
+                          key={day}
+                          className={`symbol-cell symbol-${convertShiftToSymbol(
+                            row.schedule[day],
+                          )}`}
+                        >
+                          {convertShiftToSymbol(row.schedule[day])}
+                        </td>
+                      ))}
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          )}
         </main>
       </div>
       {showSplash && <SplashScreen isExiting={isExiting} />}
