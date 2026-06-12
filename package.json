@@ -2,7 +2,12 @@
   "name": "check-cham-cong",
   "version": "0.1.0",
   "private": true,
+  "author": "Quách Công Thịnh",
+  "description": "Phần mềm kiểm tra dữ liệu chấm công phòng khám",
+  "main": "electron.js",
+  "homepage": "./",
   "dependencies": {
+    "@noble/hashes": "1.3.1",
     "@testing-library/dom": "^10.4.1",
     "@testing-library/jest-dom": "^6.9.1",
     "@testing-library/react": "^16.3.2",
@@ -18,7 +23,9 @@
     "start": "react-scripts start",
     "build": "react-scripts build",
     "test": "react-scripts test",
-    "eject": "react-scripts eject"
+    "eject": "react-scripts eject",
+    "electron-dev": "concurrently \"cross-env ELECTRON_START_URL=http://localhost:3000 npm start\" \"wait-on http://localhost:3000 && electron .\"",
+    "electron-pack": "electron-builder"
   },
   "eslintConfig": {
     "extends": [
@@ -37,5 +44,29 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2",
+    "cross-env": "^7.0.3",
+    "electron": "^41.7.1",
+    "electron-builder": "24.13.3",
+    "wait-on": "^7.2.0"
+  },
+  "build": {
+    "appId": "com.checkchamcong.app",
+    "extends": null,
+    "extraMetadata": {
+      "main": "electron.js"
+    },
+    "files": [
+      "electron.js",
+      "package.json"
+    ],
+    "directories": {
+      "output": "dist"
+    },
+    "win": {
+      "target": "nsis"
+    }
   }
 }
